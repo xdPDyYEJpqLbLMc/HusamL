@@ -1,0 +1,64 @@
+local SpoofTable = {
+    WalkSpeed = 16,
+    JumpPower = 50
+}
+-- // __index hook
+local __index
+__index = hookmetamethod(game, "__index", function(t, k)
+    -- // Make sure it's trying to get our humanoid's ws/jp
+    if (not checkcaller() and t:IsA("Humanoid") and (k == "WalkSpeed" or k == "JumpPower")) then
+        -- // Return spoof values
+        return SpoofTable[k]
+    end
+
+    -- //
+    return __index(t, k)
+end)
+
+-- // __newindex hook
+local __newindex
+__newindex = hookmetamethod(game, "__newindex", function(t, k, v)
+    -- // Make sure it's trying to set our humanoid's ws/jp
+    if (not checkcaller() and t:IsA("Humanoid") and (k == "WalkSpeed" or k == "JumpPower")) then
+        -- // Add values to spoof table
+        SpoofTable[k] = v
+
+        -- // Disallow the set
+        return
+    end
+    
+    -- //
+    return __newindex(t, k, v)
+end)
+assert(getrawmetatable)
+gmt = getrawmetatable(game)
+setreadonly(gmt, false)
+old = gmt.__namecall
+gmt.__namecall =
+    newcclosure(
+        function(self, ...)
+        local args = {...}
+        if tostring(args[1]) == "BreathingHAMON" then
+            return
+        elseif tostring(args[1]) == "TeleportDetect" then
+            return
+        elseif tostring(args[1]) == "CHECKER_1" then
+            return
+        elseif tostring(args[1]) == "CHECKER" then
+            return
+        elseif tostring(args[1]) == "GUI_CHECK" then
+            return
+        elseif tostring(args[1]) == "OneMoreTime" then
+            return
+        elseif tostring(args[1]) == "checkingSPEED" then
+            return
+        elseif tostring(args[1]) == "BANREMOTE" then
+            return
+        elseif tostring(args[1]) == "PERMAIDBAN" then
+            return
+        elseif tostring(args[1]) == "KICKREMOTE" then
+            return
+        elseif tostring(args[1]) == "BR_KICKPC" then
+            return end
+    return old(self, ...)
+end)
